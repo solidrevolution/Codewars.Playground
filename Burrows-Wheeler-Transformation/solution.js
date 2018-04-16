@@ -1,15 +1,39 @@
-'use strict';
+"use strict";
 
 module.exports = {
-    encode: function encode(s) {
+  encode: function encode(s) {
+    if (s === null || s === undefined) return "";
 
-        var asArray = s.split("");
+    let tmp = s;
+    let cache = [];
 
-        console.log(asArray[asArray.length - 1]);
-
-        return ["", -1];
-    },
-    decode: function decode(s, i) {
-        return "";
+    for (let index = 0; index < s.length; index++) {
+      tmp = tmp.charAt(tmp.length - 1) + tmp.slice(0, tmp.length - 1);
+      cache.push(tmp);
     }
+    cache.sort();
+
+    var lastColumn = cache.reduce(selectLastChar, "");
+    var rowIndex = cache.findIndex(el => el === s);
+
+    function selectLastChar(acc, cValue) {
+      return acc + cValue[cValue.length - 1];
+    }
+
+    return [lastColumn, rowIndex];
+  },
+
+  decode: function decode(s, i) {
+    if (!s) return "";
+
+    let cache = [];
+
+    for (let j = 0; j < s.length; j++) {
+      for (let i = 0; i < s.length; i++) {
+        cache[i] = s[i] + (cache[i] || "");
+      }
+      cache.sort();
+    }
+    return cache[i];
+  }
 };
